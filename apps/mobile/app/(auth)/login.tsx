@@ -1,12 +1,13 @@
 import Button from "@/src/components/ui/Button";
-import Input from "@/src/components/ui/Input";
 import Logo from "@/src/components/ui/Logo";
 import AuthLayout from "@/src/layouts/AuthLayout";
 import { Colors, Spacing } from "@/src/theme";
 import { router } from "expo-router";
 import { Apple, Globe } from "lucide-react-native";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -16,7 +17,30 @@ import {
   Text,
   View,
 } from "react-native";
+
+import FormInput from "@/src/components/form/FormInput";
+
+import {
+  LoginForm,
+  loginSchema,
+} from "@/src/validation/login.schema";
+
+
 export default function LoginScreen() {
+  const {
+  control,
+  handleSubmit,
+} = useForm<LoginForm>({
+  resolver: zodResolver(loginSchema),
+
+  defaultValues: {
+    email: "",
+    password: "",
+  },
+});
+const onSubmit = (data: LoginForm) => {
+  console.log(data);
+};
   const [showPassword, setShowPassword] = useState(false);
   return (
     <AuthLayout>
@@ -44,20 +68,23 @@ export default function LoginScreen() {
           <Text style={styles.label}>
   Email
 </Text>
-          <Input
-            placeholder="Email Address"
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
+          <FormInput
+  control={control}
+  name="email"
+  placeholder="Email Address"
+  keyboardType="email-address"
+/>
            <Text style={styles.label}>
   Password
 </Text>
 
 <View style={styles.passwordContainer}>
-  <Input
-    placeholder="Password"
-    secureTextEntry={!showPassword}
-  />
+  <FormInput
+  control={control}
+  name="password"
+  placeholder="Password"
+  secureTextEntry={!showPassword}
+/>
 
   <Pressable
     style={styles.eyeButton}
@@ -72,7 +99,10 @@ export default function LoginScreen() {
   Forgot Password?
 </Text>
 
-          <Button title="Login" />
+          <Button
+  title="Login"
+  onPress={handleSubmit(onSubmit)}
+/>
           <View style={styles.divider}>
   <View style={styles.line} />
   <Text style={styles.or}>OR</Text>
