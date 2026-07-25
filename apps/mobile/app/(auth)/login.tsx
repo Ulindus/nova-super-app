@@ -24,7 +24,8 @@ import {
   LoginForm,
   loginSchema,
 } from "@/src/validation/login.schema";
-
+import { useRef } from "react";
+import { TextInput } from "react-native";
 
 export default function LoginScreen() {
   const {
@@ -41,6 +42,7 @@ export default function LoginScreen() {
 const onSubmit = (data: LoginForm) => {
   console.log(data);
 };
+const passwordRef = useRef<TextInput>(null);
   const [showPassword, setShowPassword] = useState(false);
   return (
     <AuthLayout>
@@ -68,24 +70,30 @@ const onSubmit = (data: LoginForm) => {
           <Text style={styles.label}>
   Email
 </Text>
-          <FormInput
+   <FormInput
   control={control}
   name="email"
   placeholder="Email Address"
   keyboardType="email-address"
+  autoCapitalize="none"
+  autoCorrect={false}
+  returnKeyType="next"
+  onSubmitEditing={() => passwordRef.current?.focus()}
 />
            <Text style={styles.label}>
   Password
 </Text>
 
 <View style={styles.passwordContainer}>
-  <FormInput
+ <FormInput
+  ref={passwordRef}
   control={control}
   name="password"
   placeholder="Password"
   secureTextEntry={!showPassword}
+  returnKeyType="done"
+  onSubmitEditing={handleSubmit(onSubmit)}
 />
-
   <Pressable
     style={styles.eyeButton}
     onPress={() => setShowPassword(!showPassword)}
